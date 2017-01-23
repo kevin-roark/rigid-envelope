@@ -11,8 +11,15 @@ mb.on('ready', () => {
 
   authorize(credentials, auth => {
     let gmail = new Gmail(auth);
-    gmail.get3DScanMessages(emails => {
-
+    gmail.getInbox3DScanMessages(emails => {
+      emails.forEach((email, idx) => {
+        gmail.getAttachments({ email, supportedMimeTypes: ['application/zip'] }, attachments => {
+          console.log(`attachments for email ${email.id}:`);
+          attachments.forEach(attachment => {
+            console.log(`${attachment.filename} - ${attachment.mimeType}`);
+          });
+        });
+      });
     });
   });
 });

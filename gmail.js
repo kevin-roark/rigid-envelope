@@ -32,8 +32,8 @@ module.exports = class Gmail {
     });
   }
 
-  getInboxMessages (callback) {
-    this.gmail.users.messages.list(this.apiParams({ labelIds: 'INBOX' }), (err, response) => {
+  getMessagesWithLabelIDs (labelIds, callback) {
+    this.gmail.users.messages.list(this.apiParams({ labelIds }), (err, response) => {
       if (err) {
         console.log('The API returned an error: ' + err);
         return;
@@ -43,9 +43,9 @@ module.exports = class Gmail {
       let remaining = messages.length;
       let emails = [];
       messages.forEach(message => {
-        this.gmail.users.messages.get(this.apiParams({ id: message.id }), (err, response) => {
-          if (response) {
-            emails.push(response);
+        this.gmail.users.messages.get(this.apiParams({ id: message.id }), (err, email) => {
+          if (email) {
+            emails.push(email);
           }
 
           remaining -= 1;
@@ -63,20 +63,55 @@ module.exports = class Gmail {
     });
   }
 
-  get3DScanMessages (callback) {
-    this.getInboxMessages(emails => {
-      let scanEmails = emails.filter(email => {
-        return email.labelIds.indexOf(scanLabelId) >= 0;
-      });
+  getInboxMessages (callback) {
+    this.getMessagesWithLabelIDs('INBOX', callback);
+  }
 
-      console.log(scanEmails);
-      if (callback) {
-        callback(scanEmails);
+  getInbox3DScanMessages (callback) {
+    this.getMessagesWithLabelIDs(['INBOX', scanLabelId], callback);
+  }
+
+  getAttachments ({ email, supportedMimeTypes }, callback) {
+    let attachmentParts = email.payload.parts.filter(part => {
+      if (!(part.filename && part.filename.length > 0)) {
+        return false;
       }
+
+      if (supportedMimeTypes && supportedMimeTypes.indexOf(part.mimeType) < 0) {
+        return false;
+      }
+
+      return true;
     });
+
+    let remaining = attachmentParts.length;
+    let attachments = [];
+    attachmentParts.forEach(part => {
+      let params = this.apiParams({
+        id: part.body.attachmentId,
+        messageId: email.id
+      });
+      this.gmail.users.messages.attachments.get(params, (err, attachment) => {
+        if (attachment) {
+          attachments.push({
+            filename: part.filename,
+            mimeType: part.mimeType,
+            size: attachment.size,
+            data: attachment.data
+          });
+        }
+
+        remaining -= 1;
+        if (remaining === 0) {
+          finish(attachments);
+        }
+      });
+    });
+
+    function finish (attachments) {
+      if (callback) {
+        callback(attachments);
+      }
+    }
   }
 }
-
-module.exports.getInboxMessages = (auth, callback) => {
-
-};

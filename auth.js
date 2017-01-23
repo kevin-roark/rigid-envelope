@@ -1,7 +1,7 @@
 
 let fs = require('fs');
 let readline = require('readline');
-let googleAuth = require('google-auth-library');
+let GoogleAuth = require('google-auth-library');
 
 // https://developers.google.com/gmail/api/quickstart/nodejs
 // https://developers.google.com/gmail/api/auth/scopes
@@ -17,16 +17,16 @@ let TOKEN_PATH = TOKEN_DIR + 'rigid-envelope.json';
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-module.exports = function authorize(credentials, callback) {
+module.exports = function (credentials, callback) {
   var app = credentials.web;
   var clientSecret = app.client_secret;
   var clientId = app.client_id;
   var redirectUrl = app.redirect_uris[0];
-  var auth = new googleAuth();
+  var auth = new GoogleAuth();
   var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, function(err, token) {
+  fs.readFile(TOKEN_PATH, function (err, token) {
     if (err) {
       getNewToken(oauth2Client, callback);
     } else {
@@ -34,7 +34,7 @@ module.exports = function authorize(credentials, callback) {
       callback(oauth2Client);
     }
   });
-}
+};
 
 /**
  * Get and store new token after prompting for user authorization, and then
@@ -54,9 +54,9 @@ function getNewToken(oauth2Client, callback) {
     input: process.stdin,
     output: process.stdout
   });
-  rl.question('Enter the code from that page here: ', function(code) {
+  rl.question('Enter the code from that page here: ', function (code) {
     rl.close();
-    oauth2Client.getToken(code, function(err, token) {
+    oauth2Client.getToken(code, function (err, token) {
       if (err) {
         console.log('Error while trying to retrieve access token', err);
         return;
@@ -77,7 +77,7 @@ function storeToken(token) {
   try {
     fs.mkdirSync(TOKEN_DIR);
   } catch (err) {
-    if (err.code != 'EEXIST') {
+    if (err.code !== 'EEXIST') {
       throw err;
     }
   }

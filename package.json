@@ -13,5 +13,11 @@
     "google-auth-library": "^0.10.0",
     "googleapis": "^16.1.0",
     "menubar": "^5.2.0"
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "camelcase": ["error", {"properties": "never"}]
+    }
   }
 }

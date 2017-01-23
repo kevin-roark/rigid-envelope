@@ -6,18 +6,18 @@ let google = require('googleapis');
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-module.exports.listLabels = function listLabels(auth) {
+module.exports.listLabels = function (auth) {
   var gmail = google.gmail('v1');
   gmail.users.labels.list({
     auth: auth,
-    userId: 'me',
-  }, function(err, response) {
+    userId: 'me'
+  }, function (err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
       return;
     }
     var labels = response.labels;
-    if (labels.length == 0) {
+    if (labels.length === 0) {
       console.log('No labels found.');
     } else {
       console.log('Labels:');
@@ -27,4 +27,4 @@ module.exports.listLabels = function listLabels(auth) {
       }
     }
   });
-}
+};

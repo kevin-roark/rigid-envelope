@@ -1,0 +1,16 @@
+{
+  "name": "rigidenvelope",
+  "private": true,
+  "version": "0.0.0",
+  "description": "do things to ur gmail",
+  "main": "app.js",
+  "scripts": {
+    "build": "electron-packager . RigidEnvelope --platform=darwin --arch=x64 --version=0.0.0 --icon=Icon.icns",
+    "start": "electron ."
+  },
+  "author": "kevin roark jr",
+  "dependencies": {
+    "menubar": "^5.2.0",
+    "node-gmail-api": "^0.6.0"
+  }
+}

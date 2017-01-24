@@ -16,7 +16,7 @@ module.exports = eventHandler => {
     eventHandler(eventName, data);
   };
 
-  dispatch('authorizing')
+  dispatch('authorizing');
   authorize(credentials, auth => {
     let gmail = new Gmail(auth);
 
@@ -48,14 +48,14 @@ module.exports = eventHandler => {
             });
           });
         });
-      })
+      });
     });
 
-    function getActiveScanEmails (callback) {
+    function getActiveScanEmails(callback) {
       gmail.getMessagesWithLabelIDs(['INBOX', SCAN_LABEL_ID], callback);
     }
 
-    function getScanAttachment (email, callback) {
+    function getScanAttachment(email, callback) {
       gmail.getAttachments({ email, supportedMimeTypes: ['application/zip'] }, attachments => {
         let a = attachments && attachments.length > 0 ? attachments[0] : null;
         if (callback) {
@@ -64,7 +64,7 @@ module.exports = eventHandler => {
       });
     }
 
-    function saveScanToFilesystem (email, attachment, callback = () => {}) {
+    function saveScanToFilesystem(email, attachment, callback = () => {}) {
       let subject = getSubject(email);
       let modelName = subject.replace('3D Model', '').trim().replace(/ /g, '-');
       let zipname = `${LOCAL_SCAN_DIRECTORY}/${modelName}.zip`;
@@ -91,15 +91,15 @@ module.exports = eventHandler => {
       });
     }
 
-    function archiveEmail (email, callback) {
-      gmail.archiveEmail(email.id, (err, res) => {
+    function archiveEmail(email, callback) {
+      gmail.archiveEmail(email.id, err => {
         if (callback) {
           callback(!err);
         }
       });
     }
 
-    function getSubject (email) {
+    function getSubject(email) {
       return email.payload.headers.find(h => h.name === 'Subject').value;
     }
   });

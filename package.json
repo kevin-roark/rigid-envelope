@@ -17,13 +17,10 @@
   },
   "xo": {
     "space": true,
+    "envs": ["browser", "node"],
     "rules": {
-      "camelcase": [
-        "error",
-        {
-          "properties": "never"
-        }
-      ]
+      "camelcase": ["error", {"properties": "never"}],
+      "object-curly-spacing": ["error", "always"]
     }
   }
 }

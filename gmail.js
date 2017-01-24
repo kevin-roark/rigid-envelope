@@ -2,17 +2,17 @@
 const google = require('googleapis');
 
 module.exports = class Gmail {
-  constructor (auth) {
+  constructor(auth) {
     this.auth = auth;
-    this.gmail = google.gmail('v1');;
+    this.gmail = google.gmail('v1');
   }
 
-  apiParams (params = {}) {
+  apiParams(params = {}) {
     let defaultParams = { auth: this.auth, userId: 'me' };
     return Object.assign(defaultParams, params);
   }
 
-  listLabels () {
+  listLabels() {
     this.gmail.users.labels.list(this.apiParams(), (err, response) => {
       if (err) {
         console.log('The API returned an error: ' + err);
@@ -31,7 +31,7 @@ module.exports = class Gmail {
     });
   }
 
-  getMessagesWithLabelIDs (labelIds, callback) {
+  getMessagesWithLabelIDs(labelIds, callback) {
     this.gmail.users.messages.list(this.apiParams({ labelIds }), (err, response) => {
       if (err) {
         console.log('The API returned an error: ' + err);
@@ -46,7 +46,7 @@ module.exports = class Gmail {
       let emails = [];
       messages.forEach(message => {
         this.gmail.users.messages.get(this.apiParams({ id: message.id }), (err, email) => {
-          if (email) {
+          if (!err && email) {
             emails.push(email);
           }
 
@@ -54,10 +54,10 @@ module.exports = class Gmail {
           if (remaining === 0) {
             finish(emails);
           }
-        })
+        });
       });
 
-      function finish (emails) {
+      function finish(emails) {
         if (callback) {
           callback(emails);
         }
@@ -65,11 +65,11 @@ module.exports = class Gmail {
     });
   }
 
-  getInboxMessages (callback) {
+  getInboxMessages(callback) {
     this.getMessagesWithLabelIDs('INBOX', callback);
   }
 
-  getAttachments ({ email, supportedMimeTypes }, callback) {
+  getAttachments({ email, supportedMimeTypes }, callback) {
     let attachmentParts = email.payload.parts.filter(part => {
       if (!(part.filename && part.filename.length > 0)) {
         return false;
@@ -90,7 +90,7 @@ module.exports = class Gmail {
         messageId: email.id
       });
       this.gmail.users.messages.attachments.get(params, (err, attachment) => {
-        if (attachment) {
+        if (!err && attachment) {
           attachments.push({
             filename: part.filename,
             mimeType: part.mimeType,
@@ -106,14 +106,14 @@ module.exports = class Gmail {
       });
     });
 
-    function finish (attachments) {
+    function finish(attachments) {
       if (callback) {
         callback(attachments);
       }
     }
   }
 
-  addLabels ({ messageId, labelIds }, callback) {
+  addLabels({ messageId, labelIds }, callback) {
     let params = this.apiParams({
       id: messageId,
       addLabelIds: labelIds
@@ -133,7 +133,7 @@ module.exports = class Gmail {
     });
   }
 
-  removeLabels ({ messageId, labelIds }, callback) {
+  removeLabels({ messageId, labelIds }, callback) {
     let params = this.apiParams({
       id: messageId,
       removeLabelIds: labelIds
@@ -153,7 +153,7 @@ module.exports = class Gmail {
     });
   }
 
-  archiveEmail (messageId, callback) {
-    this.removeLabels({ messageId, labelIds: ['INBOX']}, callback);
+  archiveEmail(messageId, callback) {
+    this.removeLabels({ messageId, labelIds: ['INBOX'] }, callback);
   }
-}
+};

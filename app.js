@@ -1,7 +1,5 @@
 
-let { ipcMain } = require('electron');
 let menubar = require('menubar');
-let fs = require('fs');
 let email3DScanCollector = require('./email-3dscan-collector');
 
 const SCAN_CHECK_INTERVAL = 1000 * 60 * 30; // 30 minutes
@@ -23,7 +21,7 @@ mb.on('after-create-window', () => {
   }
 });
 
-function handle3DScanEmails () {
+function handle3DScanEmails() {
   email3DScanCollector((eventName, data) => {
     switch (eventName) {
       case 'error': {

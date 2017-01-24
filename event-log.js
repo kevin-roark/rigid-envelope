@@ -10,7 +10,9 @@ let storedEvents = module.exports.loadStoredEvents = () => {
 };
 
 module.exports.addEvent = event => {
-  if (!event.date) event.date = new Date();
+  if (!event.date) {
+    event.date = new Date();
+  }
 
   let events = storedEvents();
   events.push(event);

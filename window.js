@@ -17,7 +17,7 @@ let eventLog = remote.require('./event-log.js');
     notify(arg);
   });
 
-  function logEvent (event) {
+  function logEvent(event) {
     let time = moment(event.date).calendar();
     let log = `${time} — ${event.text}`;
 
@@ -28,13 +28,13 @@ let eventLog = remote.require('./event-log.js');
     eventLog.addEvent(event);
   }
 
-  function clearEventLog () {
+  function clearEventLog() {
     eventList.innerHTML = '';
 
     eventLog.clearStoredEvents();
   }
 
-  function notify ({ title, options}) {
+  function notify({ title, options }) {
     new Notification(title, options);
   }
 })();

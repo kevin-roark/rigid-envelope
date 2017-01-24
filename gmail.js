@@ -114,29 +114,17 @@ module.exports = class Gmail {
   }
 
   addLabels({ messageId, labelIds }, callback) {
-    let params = this.apiParams({
-      id: messageId,
-      addLabelIds: labelIds
-    });
-    this.gmail.users.messages.modify(params, (err, response) => {
-      if (err) {
-        console.log('The API returned an error: ' + err);
-        if (callback) {
-          callback(err, null);
-        }
-        return;
-      }
-
-      if (callback) {
-        callback(null, response);
-      }
-    });
+    this.modifyLabels({ messageId, addLabelIds: labelIds }, callback);
   }
 
   removeLabels({ messageId, labelIds }, callback) {
+    this.modifyLabels({ messageId, removeLabelIds: labelIds }, callback);
+  }
+
+  modifyLabels({ messageId, addLabelIds, removeLabelIds }, callback) {
     let params = this.apiParams({
       id: messageId,
-      removeLabelIds: labelIds
+      resource: { removeLabelIds, addLabelIds }
     });
     this.gmail.users.messages.modify(params, (err, response) => {
       if (err) {

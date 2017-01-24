@@ -9,6 +9,9 @@ let eventLog = remote.require('./event-log.js');
   let clearButton = document.querySelector('.clear-button');
   clearButton.addEventListener('click', clearEventLog);
 
+  let closeButton = document.querySelector('.close-button');
+  closeButton.addEventListener('click', quit);
+
   let storedEvents = eventLog.loadStoredEvents();
   storedEvents.forEach(logEvent);
 
@@ -36,5 +39,9 @@ let eventLog = remote.require('./event-log.js');
 
   function notify({ title, options }) {
     new Notification(title, options);
+  }
+
+  function quit () {
+    ipcRenderer.send('quit');
   }
 })();

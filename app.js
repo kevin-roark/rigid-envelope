@@ -1,4 +1,5 @@
 
+let { ipcMain } = require('electron');
 let menubar = require('menubar');
 let email3DScanCollector = require('./email-3dscan-collector');
 
@@ -8,6 +9,7 @@ let mb = menubar({ preloadWindow: true, height: 600 });
 let canNotify = false;
 
 mb.on('ready', () => {
+  mb.showWindow();
   handle3DScanEmails();
   setInterval(handle3DScanEmails, SCAN_CHECK_INTERVAL);
 });
@@ -19,6 +21,10 @@ mb.on('after-create-window', () => {
     notificationQueue.forEach(({ title, options }) => makeNotification(title, options));
     notificationQueue = [];
   }
+});
+
+ipcMain.on('quit', () => {
+  mb.app.quit();
 });
 
 function handle3DScanEmails() {

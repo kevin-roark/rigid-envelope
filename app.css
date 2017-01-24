@@ -5,12 +5,16 @@ body {
   font-size: 80%;
 }
 
-h2 {
+.title {
+  position: fixed;
+  top: 0;
+  left: 0; width: 100%;
   text-align: center;
 }
 
 .event-log {
-  max-height: 400px;
+  padding-top: 30px;
+  padding-bottom: 60px;
   list-style: none;
   overflow: scroll;
 }
@@ -20,9 +24,11 @@ h2 {
   margin: 10px;
 }
 
-.clear-button {
-  width: 200px;
-  margin: 40px auto;
+.button {
+  z-index: 1;
+  position: fixed;
+  bottom: 10px;
+  width: 150px;
   text-align: center;
   cursor: pointer;
   background: #000;
@@ -30,7 +36,19 @@ h2 {
   padding: 10px;
   transition: all 0.2s;
 }
-  .clear-button:hover {
+  .button:hover {
     color: #000;
     background: #fff;
+  }
+
+.clear-button {
+  left: 10px;
+}
+
+.close-button {
+  right: 10px;
+}
+  .close-button:hover {
+    background: #f00;
+    color: #fff;
   }

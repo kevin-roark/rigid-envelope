@@ -1,4 +1,36 @@
 
 body {
   background: #ff0;
+  font-family: Menlo, monospace;
+  font-size: 80%;
 }
+
+h2 {
+  text-align: center;
+}
+
+.event-log {
+  max-height: 400px;
+  list-style: none;
+  overflow: scroll;
+}
+
+.event-log li {
+  line-height: 1.5;
+  margin: 10px;
+}
+
+.clear-button {
+  width: 200px;
+  margin: 40px auto;
+  text-align: center;
+  cursor: pointer;
+  background: #000;
+  color: #fff;
+  padding: 10px;
+  transition: all 0.2s;
+}
+  .clear-button:hover {
+    color: #000;
+    background: #fff;
+  }

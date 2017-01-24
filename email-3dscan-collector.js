@@ -26,7 +26,7 @@ module.exports = eventHandler => {
         return dispatch('emptyInbox', { text: 'No new 3D scans found! Goodbye :)' });
       }
 
-      dispatch('loadedEmails', { count: emails.length, text: `Loaded ${emails.length} 3D scan emails` });
+      dispatch('loadedEmails', { count: emails.length, text: `Loading ${emails.length} 3D scans` });
       emails.forEach(email => {
         let subject = getSubject(email);
         getScanAttachment(email, attachment => {
@@ -44,7 +44,7 @@ module.exports = eventHandler => {
                 return dispatch('error', { text: `Error archiving: ${subject}...` });
               }
 
-              dispatch('finishedEmail', { subject, text: `Finished processing: ${subject}!` });
+              dispatch('finishedEmail', { subject, text: `Downloaded scan for: ${subject}` });
             });
           });
         });

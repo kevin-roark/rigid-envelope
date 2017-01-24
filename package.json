@@ -12,12 +12,18 @@
   "dependencies": {
     "google-auth-library": "^0.10.0",
     "googleapis": "^16.1.0",
-    "menubar": "^5.2.0"
+    "menubar": "^5.2.0",
+    "moment": "^2.17.1"
   },
   "xo": {
     "space": true,
     "rules": {
-      "camelcase": ["error", {"properties": "never"}]
+      "camelcase": [
+        "error",
+        {
+          "properties": "never"
+        }
+      ]
     }
   }
 }

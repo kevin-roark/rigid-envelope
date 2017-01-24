@@ -1,12 +1,12 @@
 
-let electron = require('electron');
-let { ipcMain } = electron;
+let { ipcMain } = require('electron');
 let menubar = require('menubar');
+let fs = require('fs');
 let email3DScanCollector = require('./email-3dscan-collector');
 
 const SCAN_CHECK_INTERVAL = 1000 * 60 * 30; // 30 minutes
 
-let mb = menubar();
+let mb = menubar({ preloadWindow: true, height: 600 });
 let canNotify = false;
 
 mb.on('ready', () => {
@@ -27,7 +27,7 @@ function handle3DScanEmails () {
   email3DScanCollector((eventName, data) => {
     switch (eventName) {
       case 'error': {
-
+        makeNotification('Error', { body: data.text });
       } break;
 
       case 'loadedEmails': {
@@ -35,7 +35,7 @@ function handle3DScanEmails () {
       } break;
 
       case 'finishedEmail': {
-
+        makeNotification('Downloaded Scan', { body: data.subject });
       } break;
 
       default: break;
@@ -49,7 +49,9 @@ function makeNotification(title, options = {}) {
     return;
   }
 
-  // TODO: this needs to run in the renderer process
   // options.icon = path.join(__dirname, 'icon.png') would be cool
-  // new Notification(title, options);
+
+  if (mb.window) {
+    mb.window.webContents.send('notify', { title, options });
+  }
 }

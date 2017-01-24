@@ -1,25 +1,55 @@
 
+let electron = require('electron');
+let { ipcMain } = electron;
 let menubar = require('menubar');
-let authorize = require('./auth');
-let credentials = require('./credentials');
-let Gmail = require('./gmail');
+let email3DScanCollector = require('./email-3dscan-collector');
+
+const SCAN_CHECK_INTERVAL = 1000 * 60 * 30; // 30 minutes
 
 let mb = menubar();
+let canNotify = false;
 
 mb.on('ready', () => {
-  console.log('im ready (:');
-
-  authorize(credentials, auth => {
-    let gmail = new Gmail(auth);
-    gmail.getInbox3DScanMessages(emails => {
-      emails.forEach((email, idx) => {
-        gmail.getAttachments({ email, supportedMimeTypes: ['application/zip'] }, attachments => {
-          console.log(`attachments for email ${email.id}:`);
-          attachments.forEach(attachment => {
-            console.log(`${attachment.filename} - ${attachment.mimeType}`);
-          });
-        });
-      });
-    });
-  });
+  handle3DScanEmails();
+  setInterval(handle3DScanEmails, SCAN_CHECK_INTERVAL);
 });
+
+let notificationQueue = [];
+mb.on('after-create-window', () => {
+  canNotify = true;
+  if (notificationQueue.length > 0) {
+    notificationQueue.forEach(({ title, options }) => makeNotification(title, options));
+    notificationQueue = [];
+  }
+});
+
+function handle3DScanEmails () {
+  email3DScanCollector((eventName, data) => {
+    switch (eventName) {
+      case 'error': {
+
+      } break;
+
+      case 'loadedEmails': {
+        makeNotification('Downloading 3D scans', { body: data.text });
+      } break;
+
+      case 'finishedEmail': {
+
+      } break;
+
+      default: break;
+    }
+  });
+}
+
+function makeNotification(title, options = {}) {
+  if (!canNotify) {
+    notificationQueue.push({ title, options });
+    return;
+  }
+
+  // TODO: this needs to run in the renderer process
+  // options.icon = path.join(__dirname, 'icon.png') would be cool
+  // new Notification(title, options);
+}

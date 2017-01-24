@@ -1,6 +1,5 @@
 
 const google = require('googleapis');
-const scanLabelId = 'Label_6607580414270488454';
 
 module.exports = class Gmail {
   constructor (auth) {
@@ -36,6 +35,9 @@ module.exports = class Gmail {
     this.gmail.users.messages.list(this.apiParams({ labelIds }), (err, response) => {
       if (err) {
         console.log('The API returned an error: ' + err);
+        if (callback) {
+          callback(null);
+        }
         return;
       }
 
@@ -65,10 +67,6 @@ module.exports = class Gmail {
 
   getInboxMessages (callback) {
     this.getMessagesWithLabelIDs('INBOX', callback);
-  }
-
-  getInbox3DScanMessages (callback) {
-    this.getMessagesWithLabelIDs(['INBOX', scanLabelId], callback);
   }
 
   getAttachments ({ email, supportedMimeTypes }, callback) {
@@ -113,5 +111,49 @@ module.exports = class Gmail {
         callback(attachments);
       }
     }
+  }
+
+  addLabels ({ messageId, labelIds }, callback) {
+    let params = this.apiParams({
+      id: messageId,
+      addLabelIds: labelIds
+    });
+    this.gmail.users.messages.modify(params, (err, response) => {
+      if (err) {
+        console.log('The API returned an error: ' + err);
+        if (callback) {
+          callback(err, null);
+        }
+        return;
+      }
+
+      if (callback) {
+        callback(null, response);
+      }
+    });
+  }
+
+  removeLabels ({ messageId, labelIds }, callback) {
+    let params = this.apiParams({
+      id: messageId,
+      removeLabelIds: labelIds
+    });
+    this.gmail.users.messages.modify(params, (err, response) => {
+      if (err) {
+        console.log('The API returned an error: ' + err);
+        if (callback) {
+          callback(err, null);
+        }
+        return;
+      }
+
+      if (callback) {
+        callback(null, response);
+      }
+    });
+  }
+
+  archiveEmail (messageId, callback) {
+    this.removeLabels({ messageId, labelIds: ['INBOX']}, callback);
   }
 }

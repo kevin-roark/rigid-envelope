@@ -5,7 +5,7 @@ let GoogleAuth = require('google-auth-library');
 
 // https://developers.google.com/gmail/api/quickstart/nodejs
 // https://developers.google.com/gmail/api/auth/scopes
-let SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.labels'];
+let SCOPES = ['https://www.googleapis.com/auth/gmail.modify'];
 let TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 let TOKEN_PATH = TOKEN_DIR + 'rigid-envelope.json';

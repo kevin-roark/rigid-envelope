@@ -42,6 +42,11 @@ module.exports = class Gmail {
       }
 
       let { messages } = response;
+      if (!messages) {
+        finish([]);
+        return;
+      }
+
       let remaining = messages.length;
       let emails = [];
       messages.forEach(message => {

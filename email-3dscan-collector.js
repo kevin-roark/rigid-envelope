@@ -65,40 +65,38 @@ module.exports = eventHandler => {
     }
 
     function saveScanToFilesystem (email, attachment, callback = () => {}) {
-      callback(true);
-      // let subject = getSubject(email);
-      // let modelName = subject.replace('3D Model', '').trim().replace(/ /g, '-');
-      // let zipname = `${LOCAL_SCAN_DIRECTORY}/${modelName}.zip`;
-      // fs.writeFile(zipname, attachment.data, 'base64', err => {
-      //   if (err) {
-      //     console.log(err);
-      //     callback(false);
-      //     return;
-      //   }
-      //
-      //   let dirname = zipname.replace('.zip', '');
-      //   let unzipCommand = `unzip "${zipname}" -d "${dirname}"`;
-      //   exec(unzipCommand, err => {
-      //     if (err) {
-      //       console.log(err);
-      //       callback(false);
-      //       return;
-      //     }
-      //
-      //     fs.unlink(zipname, () => {
-      //       callback(true);
-      //     });
-      //   });
-      // });
+      let subject = getSubject(email);
+      let modelName = subject.replace('3D Model', '').trim().replace(/ /g, '-');
+      let zipname = `${LOCAL_SCAN_DIRECTORY}/${modelName}.zip`;
+      fs.writeFile(zipname, attachment.data, 'base64', err => {
+        if (err) {
+          console.log(err);
+          callback(false);
+          return;
+        }
+
+        let dirname = zipname.replace('.zip', '');
+        let unzipCommand = `unzip "${zipname}" -d "${dirname}"`;
+        exec(unzipCommand, err => {
+          if (err) {
+            console.log(err);
+            callback(false);
+            return;
+          }
+
+          fs.unlink(zipname, () => {
+            callback(true);
+          });
+        });
+      });
     }
 
     function archiveEmail (email, callback) {
-      callback(true);
-      // gmail.archiveEmail(email.id, (err, res) => {
-      //   if (callback) {
-      //     callback(!err);
-      //   }
-      // });
+      gmail.archiveEmail(email.id, (err, res) => {
+        if (callback) {
+          callback(!err);
+        }
+      });
     }
 
     function getSubject (email) {

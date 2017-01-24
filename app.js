@@ -49,8 +49,6 @@ function makeNotification(title, options = {}) {
     return;
   }
 
-  // options.icon = path.join(__dirname, 'icon.png') would be cool
-
   if (mb.window) {
     mb.window.webContents.send('notify', { title, options });
   }
